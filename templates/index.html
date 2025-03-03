@@ -15,48 +15,50 @@
     </style>
   </head>
   <body>
-    <!-- Simulated Document Container (with AngularJS attributes for simulation) -->
-    <div class="docList ng-scope" ng-show="DivDisplay" id="docContainer" ng-repeat="doc in Documents">
+    <!-- Document Container -->
+    <div class="docList">
       <span class="icon-PDF"></span>
       <p>
-        <!-- PDF link and title come from Flask variables initially -->
-        <a href="{{ pdf_link }}" target="_blank" id="pdfLink" ng-model="CheckDoc" ng-click="Checkdoc(doc)" class="ng-pristine ng-untouched ng-valid ng-binding ng-empty">
-          {{ fact_sheet_text }} <span class="badge ng-hide" ng-hide="doc.isRead">New</span>
+        <a href="{{ pdf_link }}" target="_blank" id="pdfLink">
+          {{ fact_sheet_text }} <span class="badge">New</span>
         </a>
       </p>
       <a href="{{ pdf_link }}" download id="downloadLink" class="icon-Download">Download PDF</a>
     </div>
 
-    <!-- Controls for simulation -->
+    <!-- Control Panel for Scheduling a Change -->
     <div class="controls">
-      <label for="delayInput">Delay (seconds): </label>
-      <input type="number" id="delayInput" value="60" min="1">
-      <button id="simulateButton">Simulate Change</button>
+      <h3>Set Global Change Timer</h3>
+      <form method="post">
+        <label for="delay_seconds">Delay (in seconds): </label>
+        <input type="number" name="delay_seconds" id="delay_seconds" required>
+        <button type="submit">Set Change Timer</button>
+      </form>
+      {% if scheduled_change_time %}
+        <p>Scheduled change time: {{ scheduled_change_time.strftime("%Y-%m-%d %H:%M:%S") }}</p>
+      {% else %}
+        <p>No scheduled change.</p>
+      {% endif %}
     </div>
 
+    <!-- One-Time JavaScript Reload at the Scheduled Time -->
     <script>
-      // Define our two states
-      const janPdfLink = "{{ url_for('static', filename='ace.pdf') }}";
-      const febPdfLink = "{{ url_for('static', filename='isecure.pdf') }}";
-      const janText = "Passive Fund FactSheet for January";
-      const febText = "Passive Fund FactSheet for February";
-
-      // When the simulation button is pressed:
-      document.getElementById('simulateButton').addEventListener('click', function() {
-          // Read the delay in seconds and convert to milliseconds
-          const delay = parseInt(document.getElementById('delayInput').value, 10) * 1000;
-          
-          // Optionally, disable the button to prevent re-clicking
-          this.disabled = true;
-          
-          // Set a timeout to update the UI after the specified delay
+      {% if scheduled_change_time %}
+        // Pass the scheduled change time as a Date object
+        const scheduledChange = new Date("{{ scheduled_change_time.isoformat() }}");
+        const now = new Date();
+        const delay = scheduledChange - now; // difference in milliseconds
+        
+        if (delay > 0) {
+          console.log("Scheduled reload in " + delay + " ms");
           setTimeout(() => {
-              // Update the view PDF link, download link, and the displayed text
-              document.getElementById('pdfLink').href = febPdfLink;
-              document.getElementById('pdfLink').textContent = febText + " ";
-              document.getElementById('downloadLink').href = febPdfLink;
+            location.reload();
           }, delay);
-      });
+        } else {
+          // If the scheduled time is in the past, you might choose to reload immediately.
+          console.log("Scheduled time already passed.");
+        }
+      {% endif %}
     </script>
   </body>
 </html>

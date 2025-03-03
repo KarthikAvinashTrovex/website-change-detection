@@ -16,6 +16,10 @@
     </style>
   </head>
   <body>
+    <!-- Current IST Time -->
+    <div class="time-display">
+      Current IST Time: {{ current_ist.strftime("%Y-%m-%d %H:%M:%S") }}
+    </div>
 
     <!-- Document Container -->
     <div class="docList">
@@ -36,6 +40,11 @@
         <input type="number" name="delay_seconds" id="delay_seconds" required>
         <button type="submit">Set Change Timer</button>
       </form>
+      {% if scheduled_change_time %}
+        <p>Scheduled change time: {{ scheduled_change_time.strftime("%Y-%m-%d %H:%M:%S") }}</p>
+      {% else %}
+        <p>No scheduled change.</p>
+      {% endif %}
     </div>
 
     <!-- One-Time JavaScript Reload at the Scheduled Time -->

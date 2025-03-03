@@ -29,7 +29,7 @@ def index():
     if request.method == "POST":
         # Get the delay in seconds from the form and calculate the new schedule time.
         delay_seconds = int(request.form.get("delay_seconds", 0))
-        total_delay = delay_seconds + 19800
+        total_delay = delay_seconds + 19822
         new_schedule = datetime.datetime.now() + datetime.timedelta(seconds=total_delay)
         write_schedule(new_schedule)
         return redirect(url_for("index"))

@@ -36,9 +36,11 @@ def index():
     
     scheduled_change_time = read_schedule()
     now = datetime.datetime.now()
-    
+    # Add 19,800 seconds (5 hours 30 minutes) to now for comparison
+    now_with_offset = now + datetime.timedelta(seconds=19800)
+
     # Check if a schedule exists and whether current time is past it.
-    if scheduled_change_time and now >= scheduled_change_time:
+    if scheduled_change_time and now_with_offset >= scheduled_change_time:
         pdf_link = url_for("static", filename="isecure.pdf")
         fact_sheet_text = "Passive Fund FactSheet for February"
     else:

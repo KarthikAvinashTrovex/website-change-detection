@@ -29,7 +29,7 @@ def index():
     if request.method == "POST":
         # Get the delay in seconds from the form and calculate the new schedule time.
         delay_seconds = int(request.form.get("delay_seconds", 0))
-        total_delay = delay_seconds + 19805
+        total_delay = delay_seconds + 19810
         new_schedule = datetime.datetime.now() + datetime.timedelta(seconds=total_delay)
         write_schedule(new_schedule)
         return redirect(url_for("index"))
@@ -37,7 +37,7 @@ def index():
     scheduled_change_time = read_schedule()
     now = datetime.datetime.now()
     # Add 19,800 seconds (5 hours 30 minutes) to now for comparison
-    now_with_offset = now + datetime.timedelta(seconds=19805)
+    now_with_offset = now + datetime.timedelta(seconds=19810)
 
     # Check if a schedule exists and whether current time is past it.
     if scheduled_change_time and now_with_offset >= scheduled_change_time:

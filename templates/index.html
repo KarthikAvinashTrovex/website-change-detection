@@ -12,9 +12,15 @@
       .controls { margin-top: 2em; }
       .controls label { font-size: 1rem; }
       .controls input, .controls button { font-size: 1rem; padding: 0.3em; }
+      .time-display { margin-bottom: 1em; font-weight: bold; }
     </style>
   </head>
   <body>
+    <!-- Current IST Time -->
+    <div class="time-display">
+      Current IST Time: {{ current_ist.strftime("%Y-%m-%d %H:%M:%S") }}
+    </div>
+
     <!-- Document Container -->
     <div class="docList">
       <span class="icon-PDF"></span>
@@ -55,7 +61,6 @@
             location.reload();
           }, delay);
         } else {
-          // If the scheduled time is in the past, you might choose to reload immediately.
           console.log("Scheduled time already passed.");
         }
       {% endif %}

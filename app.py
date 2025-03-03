@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import datetime
 import os
+from zoneinfo import ZoneInfo  # Python 3.9+
 
 app = Flask(__name__)
 
@@ -43,10 +44,14 @@ def index():
         pdf_link = url_for("static", filename="ace.pdf")
         fact_sheet_text = "Passive Fund FactSheet for January"
     
+    # Get current IST time using zoneinfo
+    current_ist = datetime.datetime.now(ZoneInfo("Asia/Kolkata"))
+    
     return render_template("index.html",
                            pdf_link=pdf_link,
                            fact_sheet_text=fact_sheet_text,
-                           scheduled_change_time=scheduled_change_time)
+                           scheduled_change_time=scheduled_change_time,
+                           current_ist=current_ist)
 
 if __name__ == "__main__":
     app.run(debug=True)

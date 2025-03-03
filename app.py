@@ -45,7 +45,7 @@ def index():
         fact_sheet_text = "Passive Fund FactSheet for February"
     else:
         pdf_link = url_for("static", filename="ace.pdf")
-        fact_sheet_text = "Passive Fund FactSheet for January"
+        fact_sheet_text = f"Passive Fund FactSheet for January - {now} & {now_with_offset}"
     
     # Get current IST time using zoneinfo
     current_ist = datetime.datetime.now(ZoneInfo("Asia/Kolkata"))

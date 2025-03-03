@@ -10,13 +10,12 @@
       .icon-Download { margin-left: 1em; }
       .badge { background: #ff0; padding: 2px 4px; font-size: 0.8rem; }
       .controls { margin-top: 2em; }
-      .controls label { font-size: 1rem; }
-      .controls input, .controls button { font-size: 1rem; padding: 0.3em; }
+      .controls label, .controls input, .controls button { font-size: 1rem; padding: 0.3em; }
       .time-display { margin-bottom: 1em; font-weight: bold; }
     </style>
   </head>
   <body>
-    <!-- Current IST Time -->
+    <!-- Display current IST time -->
     <div class="time-display">
       Current IST Time: {{ current_ist.strftime("%Y-%m-%d %H:%M:%S") }}
     </div>
@@ -34,14 +33,14 @@
 
     <!-- Control Panel for Scheduling a Change -->
     <div class="controls">
-      <h3>Set Global Change Timer</h3>
+      <h3>Set Global Change Timer (IST)</h3>
       <form method="post">
         <label for="delay_seconds">Delay (in seconds): </label>
         <input type="number" name="delay_seconds" id="delay_seconds" required>
         <button type="submit">Set Change Timer</button>
       </form>
       {% if scheduled_change_time %}
-        <p>Scheduled change time: {{ scheduled_change_time.strftime("%Y-%m-%d %H:%M:%S") }}</p>
+        <p>Scheduled change time (IST): {{ scheduled_change_time.strftime("%Y-%m-%d %H:%M:%S") }}</p>
       {% else %}
         <p>No scheduled change.</p>
       {% endif %}
@@ -50,7 +49,8 @@
     <!-- One-Time JavaScript Reload at the Scheduled Time -->
     <script>
       {% if scheduled_change_time %}
-        // Pass the scheduled change time as a Date object
+        // Pass the scheduled change time as a Date object.
+        // The ISO string includes timezone offset so the browser calculates the absolute time.
         const scheduledChange = new Date("{{ scheduled_change_time.isoformat() }}");
         const now = new Date();
         const delay = scheduledChange - now; // difference in milliseconds

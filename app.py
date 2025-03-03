@@ -14,7 +14,11 @@ def read_schedule():
             timestamp_str = f.read().strip()
             if timestamp_str:
                 try:
-                    return datetime.datetime.fromisoformat(timestamp_str)
+                    dt = datetime.datetime.fromisoformat(timestamp_str)
+                    # If the datetime doesn't have timezone info, assume IST
+                    if dt.tzinfo is None:
+                        dt = dt.replace(tzinfo=ZoneInfo("Asia/Kolkata"))
+                    return dt
                 except Exception as e:
                     print("Error parsing schedule:", e)
     return None
@@ -27,17 +31,21 @@ def write_schedule(scheduled_time):
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        # Get the delay in seconds from the form and calculate the new schedule time.
+        # Get the delay in seconds from the form, add 19800 seconds to it.
         delay_seconds = int(request.form.get("delay_seconds", 0))
-        new_schedule = datetime.datetime.now() + datetime.timedelta(seconds=delay_seconds)
+        delay_seconds += 19800  # Always add 5 hours 30 minutes (19800 seconds)
+        # Use current IST time for scheduling
+        now_ist = datetime.datetime.now(ZoneInfo("Asia/Kolkata"))
+        new_schedule = now_ist + datetime.timedelta(seconds=delay_seconds)
         write_schedule(new_schedule)
         return redirect(url_for("index"))
     
     scheduled_change_time = read_schedule()
     now = datetime.datetime.now()
     
-    # Check if a schedule exists and whether current time is past it.
-    if scheduled_change_time and now >= scheduled_change_time:
+    # Check if a schedule exists and whether current time (server time) is past it.
+    # Note: The scheduled_change_time is stored in IST.
+    if scheduled_change_time and now >= scheduled_change_time.astimezone():
         pdf_link = url_for("static", filename="isecure.pdf")
         fact_sheet_text = "Passive Fund FactSheet for February"
     else:
